@@ -1,15 +1,81 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
-<HEAD>
-	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
-	<TITLE></TITLE>
-	<META NAME="GENERATOR" CONTENT="OpenOffice 4.1.3  (Win32)">
-	<META NAME="AUTHOR" CONTENT="Alfredo Giani">
-	<META NAME="CREATED" CONTENT="20250304;12315813">
-	<META NAME="CHANGEDBY" CONTENT="Alfredo Giani">
-	<META NAME="CHANGED" CONTENT="20250304;12355185">
-</HEAD>
-<BODY LANG="en-GB" DIR="LTR">
-<P>Test page</P>
-</BODY>
-</HTML>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slideshow</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #slideshow {
+            max-width: 600px;
+            margin: auto;
+            position: relative;
+        }
+        img {
+            width: 100%;
+            height: auto;
+        }
+        .button {
+            cursor: pointer;
+            padding: 10px;
+            margin: 5px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="slideshow">
+    <img id="slide" src="" alt="Slideshow Image">
+</div>
+<button class="button" onclick="prevSlide()">Back</button>
+<button class="button" onclick="nextSlide()">Forward</button>
+
+<script>
+    const images = [];
+    const folder = 'media/';
+    let currentIndex = 0;
+
+    // Automatically parse the content of the media folder
+    fetch(folder)
+        .then(response => response.text())
+        .then(data => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(data, 'text/html');
+            const links = htmlDoc.querySelectorAll('a');
+
+            links.forEach(link => {
+                if (link.href.endsWith('.jpg') || link.href.endsWith('.png') || link.href.endsWith('.gif')) {
+                    images.push(link.href);
+                }
+            });
+
+            if (images.length > 0) {
+                document.getElementById('slide').src = images[currentIndex];
+            }
+        });
+
+    function showSlide(index) {
+        if (images.length > 0) {
+            currentIndex = (index + images.length) % images.length;
+            document.getElementById('slide').src = images[currentIndex];
+        }
+    }
+
+    function nextSlide() {
+        showSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+        showSlide(currentIndex - 1);
+    }
+</script>
+
+</body>
+</html>
